@@ -1,19 +1,8 @@
-buildscript {
-	ext {
-		confluent_version = "3.3.0"
-		kafka_version = "0.11.0.0-cp1"
-		avro_version = "1.8.2"
-		kafka_scala_version = "2.11"
-		scale_version = ext.kafka_scala_version + ".8"
-	}
-
-	repositories {
-		jcenter()
-	}
-
-	dependencies {
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
-	}
+ext {
+	confluent_version = "3.3.0"
+	kafka_version = "0.11.0.0-cp1"
+	avro_version = "1.8.2"
+	kafka_scala_version = "2.11"
 }
 
 
@@ -25,15 +14,6 @@ version '0.1.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
-jar {
-	manifest {
-		attributes = [
-				'Implementation-Title'  : project.getProperty('name'),
-				'Implementation-Version': project.getProperty('version'),
-		]
-	}
-}
 
 repositories {
 	jcenter()
@@ -58,4 +38,28 @@ dependencies {
 	testCompile "org.apache.kafka:kafka-streams:$kafka_version:test"
 	testCompile "io.confluent:kafka-schema-registry:$confluent_version"
 	testCompile "io.confluent:kafka-schema-registry:$confluent_version:tests"
+}
+
+jar {
+	manifest {
+		attributes = [
+				'Implementation-Title'  : project.getProperty('name'),
+				'Implementation-Version': project.getProperty('version'),
+		]
+	}
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
 }
