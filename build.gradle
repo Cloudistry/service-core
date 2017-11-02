@@ -1,0 +1,59 @@
+buildscript {
+	ext {
+		confluent_version = "3.3.0"
+		kafka_version = "0.11.0.0-cp1"
+		avro_version = "1.8.2"
+		kafka_scala_version = "2.11"
+		scale_version = ext.kafka_scala_version + ".8"
+	}
+
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
+	}
+}
+
+
+apply plugin: 'java'
+
+group 'de.cloudistry.service-core'
+version '0.1.0'
+sourceCompatibility = 1.8
+
+
+jar {
+	manifest {
+		attributes = [
+				'Implementation-Title'  : project.getProperty('name'),
+				'Implementation-Version': project.getProperty('version'),
+		]
+	}
+}
+
+repositories {
+	jcenter()
+	maven { url "http://packages.confluent.io/maven/" }
+}
+
+dependencies {
+	compile "io.confluent:kafka-avro-serializer:$confluent_version"
+	compile "io.confluent:kafka-schema-registry-client:$confluent_version"
+	compile "org.apache.kafka:kafka-clients:$kafka_version"
+	compile "org.apache.kafka:kafka-streams:$kafka_version"
+	compile "org.apache.avro:avro:$avro_version"
+	compile "org.apache.kafka:kafka_2.11:$kafka_version"
+	compile "com.101tec:zkclient:0.10"
+	compile 'org.apache.logging.log4j:log4j-core:2.9.1'
+
+
+	testCompile "junit:junit:4.12"
+
+	testCompile "org.apache.kafka:kafka_$kafka_scala_version:$kafka_version:test"
+	testCompile "org.apache.kafka:kafka-clients:$kafka_version:test"
+	testCompile "org.apache.kafka:kafka-streams:$kafka_version:test"
+	testCompile "io.confluent:kafka-schema-registry:$confluent_version"
+	testCompile "io.confluent:kafka-schema-registry:$confluent_version:tests"
+}
